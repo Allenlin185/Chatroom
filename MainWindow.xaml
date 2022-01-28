@@ -1,0 +1,133 @@
+﻿<Window x:Class="Chatroom.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Chatroom"
+        xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
+        mc:Ignorable="d"
+        Title="Chatroom for socket" Icon="warterbd_logo.png" Width="600" Height="500" d:DesignWidth="600" d:DesignHeight="500" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+    <Window.Resources>
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="#FF666666" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="0" Padding="7" >
+                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="#FF666666" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFA2CB5B"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#FFDDDDDD"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="7" />
+            <Setter Property="Foreground" Value="#FF666666" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="75"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"/>
+            <RowDefinition Height="240"/>
+            <RowDefinition Height="80*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Image Source="warter_logo.png"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="40,30,10, 30">
+                    <TextBlock x:Name="Tbl_message" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="10, 10, 15, 10" HorizontalAlignment="Right">
+                    <Label x:Name="Bt_signin" Padding="3,10" Cursor="Hand" MouseEnter="Icon_hover" MouseLeave="Icon_leave" ToolTip="Sign in to chatroom" MouseDown="open_signin" Visibility="Visible" >
+                        <StackPanel>
+                            <fa:FontAwesome Icon="SignIn" FontSize="24"/>
+                        </StackPanel>
+                    </Label>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="10, 10, 15, 10" HorizontalAlignment="Right">
+                    <Label x:Name="Bt_signout" Padding="3,10" Cursor="Hand" MouseEnter="Icon_hover" MouseLeave="Icon_leave" ToolTip="Sign out from chatroom" MouseDown="Signout" Visibility="Hidden">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Name="username" Content="allen lin"/>
+                            <fa:FontAwesome Icon="SignOut" FontSize="24"/>
+                        </StackPanel>
+                    </Label>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <DataGrid x:Name="chatlist" Grid.Row="1" Grid.Column="1" AutoGenerateColumns="False" CanUserAddRows="False" SelectionChanged="Connect_user">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="User name" Width="5*" Binding="{Binding Path=Name}"/>
+                <DataGridTemplateColumn Header="" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Label>
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Setter Property="Foreground" Value="Black" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Getcall}" Value="true">
+                                                <Setter Property="Foreground" Value="#FFA2CB5B" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                                <StackPanel>
+                                    <fa:FontAwesome Icon="PhoneSquare"/>
+                                </StackPanel>
+                            </Label>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Visibility="Hidden" Binding="{Binding Path=Ipaddress}"/>
+                <DataGridTextColumn Visibility="Hidden" Binding="{Binding Path=Port}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Grid.Row="1" Grid.Column="2"  >
+            <ScrollViewer x:Name="Chatscroll" VerticalScrollBarVisibility="Auto" >
+                <Border Height="240" BorderBrush="#FFABADB3" BorderThickness="1" Margin="15,0">
+                    <StackPanel x:Name="Chatroom" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"/>
+                </Border>
+            </ScrollViewer>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,0,10">
+            <Label Content="Message"/>
+            <TextBox x:Name="Tb_sendcontent" Height="70" Margin="5,0,15, 0" Padding="7"/>
+            <Button x:Name="Bt_send" Content="Send" HorizontalAlignment="Right" Margin="15,5" Foreground="White" FontWeight="Bold" IsEnabled="False" Click="Send_Content" />
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Panel.ZIndex="1">
+            <Rectangle x:Name="markpage" Opacity="0.7" Fill="White" Width="595" Height="470" Visibility="Hidden"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Width="400" Height="270" Panel.ZIndex="2">
+            <Frame x:Name="dialog" Content="" NavigationUIVisibility="Hidden" IsVisibleChanged="Intro_Chatroom"></Frame>    
+        </StackPanel>
+    </Grid>
+    
+</Window>
